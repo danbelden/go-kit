@@ -1,0 +1,70 @@
+version: 2
+
+defaults: &defaults
+  working_directory: /home/circleci/go-kit
+
+golang-113: &golang-113
+  <<: *defaults
+  docker:
+  - image: golang:1.13
+
+golang-114: &golang-114
+  <<: *defaults
+  docker:
+  - image: golang:1.14
+
+golang-115: &golang-115
+  <<: *defaults
+  docker:
+  - image: golang:1.15
+
+jobs:
+  lint:
+    <<: *golang-115
+    steps:
+    - attach_workspace:
+        at: /home/circleci/go-kit
+    - run:
+        name: Go lint
+        command: |
+         make lint
+    - run:
+        name: Go vet
+        command: |
+         make vet
+  test-go113:
+    <<: *golang-113
+    steps:
+    - attach_workspace:
+        at: /home/circleci/go-kit
+    - run:
+        name: Go Test
+        command: |
+          make test
+  test-go114:
+    <<: *golang-114
+    steps:
+    - attach_workspace:
+        at: /home/circleci/go-kit
+    - run:
+        name: Go Test
+        command: |
+         make test
+  test-go115:
+    <<: *golang-115
+    steps:
+    - attach_workspace:
+        at: /home/circleci/go-kit
+    - run:
+        name: Go Test
+        command: |
+          make test
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+    - lint
+    - test-go113
+    - test-go114
+    - test-go115
