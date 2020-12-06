@@ -3,6 +3,11 @@ version: 2
 defaults: &defaults
   working_directory: /home/circleci/go-kit
 
+golang: &golang
+  <<: *defaults
+  docker:
+  - image: golang
+
 golang-113: &golang-113
   <<: *defaults
   docker:
@@ -20,7 +25,7 @@ golang-115: &golang-115
 
 jobs:
   modules:
-    <<: *golang-115
+    <<: *golang
     steps:
       - checkout
       - run:
@@ -45,13 +50,14 @@ jobs:
           root: .
           paths: '*'
   lint:
-    <<: *golang-115
+    <<: *golang
     steps:
     - attach_workspace:
         at: /home/circleci/go-kit
     - run:
         name: Go lint
         command: |
+         go get -u golang.org/x/lint/golint
          make lint
     - run:
         name: Go vet
