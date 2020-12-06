@@ -1,8 +1,44 @@
-package pkg
+package strings
 
-import "testing"
+import (
+	"testing"
 
-func TestStringWordSearch(t *testing.T) {
+	"github.com/google/go-cmp/cmp"
+)
+
+func TestUniqueSlice(t *testing.T) {
+	testCases := map[string]struct {
+		input []string
+		want  []string
+	}{
+		"empty": {
+			input: nil,
+			want:  nil,
+		},
+		"one": {
+			input: []string{"test"},
+			want:  []string{"test"},
+		},
+		"two": {
+			input: []string{"test", "test"},
+			want:  []string{"test"},
+		},
+		"three": {
+			input: []string{"test", "test", "Test"},
+			want:  []string{"test", "Test"},
+		},
+	}
+	for tn, tc := range testCases {
+		t.Run(tn, func(t *testing.T) {
+			got := UniqueSlice(tc.input)
+			if diff := cmp.Diff(got, tc.want); diff != "" {
+				t.Errorf("-got +want: %s", diff)
+			}
+		})
+	}
+}
+
+func TestSearchWord(t *testing.T) {
 	testCases := map[string]struct {
 		text string
 		word string
@@ -31,7 +67,7 @@ func TestStringWordSearch(t *testing.T) {
 	}
 	for tn, tc := range testCases {
 		t.Run(tn, func(t *testing.T) {
-			got := StringWordSearch(tc.text, tc.word)
+			got := SearchWord(tc.text, tc.word)
 			if got != tc.want {
 				t.Errorf("got: %t, want: %t", got, tc.want)
 			}
