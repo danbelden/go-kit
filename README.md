@@ -1,12 +1,20 @@
 # danbelden/go-kit
 
-A selection of Go/Golang helper functions for use on various projects.
+[![CircleCI](https://circleci.com/gh/danbelden/go-kit.svg?style=svg)](https://circleci.com/gh/danbelden/go-kit)
 
-## Documentation
+A selection of useful Go helper functions.
 
-Please see the documentation folder for examples of each function available.
+## Install
 
-- Link here
+```
+$ go get github.com/danbelden/go-kit
+```
+
+## Examples
+
+Please see the documentation folder for examples of how each function can be used:
+
+- https://github.com/danbelden/go-kit/tree/master/docs
 
 ## Development
 
@@ -14,5 +22,7 @@ Please see the documentation folder for examples of each function available.
 $ make
 help                      Show this help
 imports                   Run code cleanup with goimports
-test                      Run unit tests
+lint                      Run go lint
+vet                       Run go vet
+test                      Run go test
 ```
