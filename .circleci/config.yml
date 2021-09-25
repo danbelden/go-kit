@@ -23,6 +23,16 @@ golang-115: &golang-115
   docker:
   - image: golang:1.15
 
+golang-116: &golang-116
+  <<: *defaults
+  docker:
+    - image: golang:1.16
+
+golang-117: &golang-117
+  <<: *defaults
+  docker:
+    - image: golang:1.17
+
 jobs:
   modules:
     <<: *golang
@@ -31,10 +41,11 @@ jobs:
       - run:
           name: Make lock copy
           command: |
+            cp go.mod go.mod.fix
             cp go.sum go.sum.fix
       - restore_cache:
           keys:
-            - vendor-{{ checksum "go.mod.fix" }}
+            - vendor-{{ checksum "go.mod.fix" }}-{{ checksum "go.sum.fix" }}
       - run:
           name: Install dependencies
           command: |
@@ -43,7 +54,7 @@ jobs:
               go mod vendor
             fi
       - save_cache:
-          key: vendor-{{ checksum "go.mod.fix" }}
+          key: vendor-{{ checksum "go.mod.fix" }}-{{ checksum "go.sum.fix" }}
           paths:
             - vendor
       - persist_to_workspace:
@@ -90,6 +101,24 @@ jobs:
         name: Go Test
         command: |
           make test
+  test-go116:
+    <<: *golang-116
+    steps:
+      - attach_workspace:
+          at: /home/circleci/go-kit
+      - run:
+          name: Go Test
+          command: |
+            make test
+  test-go117:
+    <<: *golang-117
+    steps:
+      - attach_workspace:
+          at: /home/circleci/go-kit
+      - run:
+          name: Go Test
+          command: |
+            make test
 
 workflows:
   version: 2
@@ -108,3 +137,9 @@ workflows:
     - test-go115:
         requires:
         - modules
+    - test-go116:
+        requires:
+          - modules
+    - test-go117:
+        requires:
+          - modules
