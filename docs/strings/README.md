@@ -8,9 +8,9 @@ package main
 import "github.com/danbelden/go-kit/pkg/strings"
 
 func main() {
-	stringslice := []string{"A", "A", "B", "B", "C", "C"}
+	stringSlice := []string{"A", "A", "B", "B", "C", "C"}
 
-	uniqueStringSlice := strings.UniqueSlice(slice)
+	uniqueStringSlice := strings.UniqueSlice(stringSlice)
 	fmt.Println(uniqueStringSlice)
 }
 ```
