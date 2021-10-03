@@ -250,12 +250,14 @@ func TestWorkerGroup_GetResults_WhileRunning(t *testing.T) {
 	var counter int
 	lock := &coreCync.Mutex{}
 
+	doneChan := make(chan bool)
+
 	f := func() error {
 		lock.Lock()
 		defer lock.Unlock()
 
 		counter++
-		time.Sleep(time.Microsecond)
+		doneChan <- true
 
 		return nil
 	}
@@ -264,23 +266,19 @@ func TestWorkerGroup_GetResults_WhileRunning(t *testing.T) {
 		wg.Add(f)
 	}
 
-	for {
-		lock.Lock()
-		if counter < 5 {
-			lock.Unlock()
-			time.Sleep(time.Microsecond)
-			continue
+	var doneCount int
+	for <-doneChan {
+		doneCount++
+		if doneCount == 6 {
+			break
 		}
-		break
 	}
-
-	defer lock.Unlock()
 
 	results := wg.GetResults()
 
 	numResults := len(results)
 	if numResults != 10 {
-		t.Errorf("got: %d, want: 10", counter)
+		t.Errorf("unexpected num results; got: %d, want: 10", numResults)
 	}
 
 	var numRunning int
@@ -290,7 +288,7 @@ func TestWorkerGroup_GetResults_WhileRunning(t *testing.T) {
 		}
 	}
 
-	if numRunning == 10 {
-		t.Errorf("expected less running results, got: %d", numRunning)
+	if numRunning < 4 || numRunning > 6 {
+		t.Errorf("unexpected running results, got: %d", numRunning)
 	}
 }
