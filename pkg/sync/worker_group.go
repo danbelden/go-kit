@@ -95,7 +95,12 @@ func (wg *workerGroup) GetResults() map[int64]WorkerResult {
 
 	results := make(map[int64]WorkerResult)
 	for key, result := range wg.results {
-		results[key] = result
+		results[key] = &workerResult{
+			err:      result.err,
+			panic:    result.panic,
+			status:   result.status,
+			workerID: result.workerID,
+		}
 	}
 
 	return results
