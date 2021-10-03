@@ -264,7 +264,17 @@ func TestWorkerGroup_GetResults_WhileRunning(t *testing.T) {
 		wg.Add(f)
 	}
 
-	time.Sleep(time.Microsecond * 10)
+	for {
+		lock.Lock()
+		if counter < 5 {
+			lock.Unlock()
+			time.Sleep(time.Microsecond)
+			continue
+		}
+		break
+	}
+
+	defer lock.Unlock()
 
 	results := wg.GetResults()
 
