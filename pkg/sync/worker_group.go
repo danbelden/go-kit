@@ -124,8 +124,8 @@ func (wg *workerGroup) WaitOnError() error {
 
 func (wg *workerGroup) processDoneChans(stopOnError bool) error {
 	for {
-		workerID, resultChan := wg.getDoneChanToProcess()
-		if resultChan == nil {
+		workerID, doneChan := wg.getDoneChanToProcess()
+		if doneChan == nil {
 			return nil
 		}
 		select {
@@ -133,7 +133,7 @@ func (wg *workerGroup) processDoneChans(stopOnError bool) error {
 			if stopOnError {
 				return err
 			}
-		case <-resultChan:
+		case <-doneChan:
 			wg.lock.Lock()
 			delete(wg.doneChans, workerID)
 			wg.lock.Unlock()
@@ -141,7 +141,7 @@ func (wg *workerGroup) processDoneChans(stopOnError bool) error {
 	}
 }
 
-func (wg *workerGroup) getDoneChanToProcess() (int64, chan bool) {
+func (wg *workerGroup) getDoneChanToProcess() (int64, <-chan bool) {
 	wg.lock.RLock()
 	defer wg.lock.RUnlock()
 
