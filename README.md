@@ -25,4 +25,5 @@ imports                   Run code cleanup with goimports
 lint                      Run go lint
 vet                       Run go vet
 test                      Run go test
+test-race                 Run go test with race checks
 ```

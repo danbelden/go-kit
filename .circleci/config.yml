@@ -119,6 +119,15 @@ jobs:
           name: Go Test
           command: |
             make test
+  test-go117-with-race:
+    <<: *golang-117
+    steps:
+      - attach_workspace:
+          at: /home/circleci/go-kit
+      - run:
+          name: Go Test (With race checks)
+          command: |
+            make test-race
 
 workflows:
   version: 2
@@ -141,5 +150,8 @@ workflows:
         requires:
           - modules
     - test-go117:
+        requires:
+          - modules
+    - test-go117-with-race:
         requires:
           - modules

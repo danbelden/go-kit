@@ -23,3 +23,7 @@ vet:  ## Run go vet
 .PHONY: test
 test: ## Run go test
 	@go test ./...
+
+.PHONY: test-race
+test-race: ## Run go test with race checks
+	@go test -race ./...
