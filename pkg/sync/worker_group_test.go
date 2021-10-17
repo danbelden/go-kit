@@ -68,9 +68,15 @@ func TestWorkerGroup_WaitOnError_WithError(t *testing.T) {
 
 	f := func() error {
 		lock.Lock()
-		defer lock.Unlock()
+		isSleep := counter > 5
+		lock.Unlock()
 
-		time.Sleep(time.Microsecond)
+		if isSleep {
+			time.Sleep(time.Second)
+		}
+
+		lock.Lock()
+		defer lock.Unlock()
 
 		counter++
 		if counter > 5 {
@@ -87,6 +93,9 @@ func TestWorkerGroup_WaitOnError_WithError(t *testing.T) {
 	if err := wg.WaitOnError(); err == nil {
 		t.Fatalf("expected an error")
 	}
+
+	lock.Lock()
+	defer lock.Unlock()
 
 	if counter == 10 {
 		t.Errorf("got: %d, want: <10", counter)
@@ -138,9 +147,15 @@ func TestWorkerGroup_WaitOnError_WithPanic(t *testing.T) {
 
 	f := func() error {
 		lock.Lock()
-		defer lock.Unlock()
+		isSleep := counter > 5
+		lock.Unlock()
 
-		time.Sleep(time.Microsecond)
+		if isSleep {
+			time.Sleep(time.Second)
+		}
+
+		lock.Lock()
+		defer lock.Unlock()
 
 		counter++
 		if counter > 5 {
@@ -162,6 +177,9 @@ func TestWorkerGroup_WaitOnError_WithPanic(t *testing.T) {
 	if err.Error() != "worker panic" {
 		t.Errorf("unexpected error: %s", err.Error())
 	}
+
+	lock.Lock()
+	defer lock.Unlock()
 
 	if counter == 10 {
 		t.Errorf("got: %d, want: <10", counter)
